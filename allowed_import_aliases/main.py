@@ -47,13 +47,15 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     try:
         for arguments in args.a:
-            print(arguments)
+            print(f"{arguments=}")
             qualname, *aliases = arguments[0].strip().split(" ")
             allowed_aliases[qualname].update(aliases)
     except TypeError as e:
+        print(f"{e=}")
         raise Exception(f"{args}") from e
 
     if args.t is not None:
+        print("A")
         with ThreadPoolExecutor(
             max_workers=args.t or None,
             thread_name_prefix="python-import-alias-",
@@ -64,6 +66,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                 args.filenames,
             )
     elif args.p is not None:
+        print("B")
         with ProcessPoolExecutor(
             max_workers=args.p or None,
             initializer=None,
@@ -73,6 +76,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                 args.filenames,
             )
     else:
+        print("C")
         problems = map(
             partial(evaluate_file, allowed_aliases),
             args.filenames,
@@ -81,13 +85,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     try:
         problem = next(problems)
         for p in problem:  # type: DisallowedImportAlias
-            print(p)
+            print("Problem:", p)
     except StopIteration:
         return 0
 
     for problem in problems:
-        for p in problem:
-            print(p)
+        for p in problem:  # type: DisallowedImportAlias
+            print("Problem:", p)
     return 1
 
 
