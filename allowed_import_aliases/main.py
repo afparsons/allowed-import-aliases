@@ -5,7 +5,7 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 from functools import partial
 import os
-from typing import DefaultDict, Optional, Sequence, Set
+from typing import DefaultDict, Generator, Optional, Sequence, Set
 
 from allowed_import_aliases.parse import evaluate_file, DisallowedImportAlias
 
@@ -47,15 +47,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     try:
         for arguments in args.a:
-            print(f"{arguments=}")
             qualname, *aliases = arguments[0].strip().split(" ")
             allowed_aliases[qualname].update(aliases)
     except TypeError as e:
-        print(f"{e=}")
         raise Exception(f"{args}") from e
 
     if args.t is not None:
-        print("A")
         with ThreadPoolExecutor(
             max_workers=args.t or None,
             thread_name_prefix="python-import-alias-",
@@ -66,7 +63,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                 args.filenames,
             )
     elif args.p is not None:
-        print("B")
         with ProcessPoolExecutor(
             max_workers=args.p or None,
             initializer=None,
@@ -76,30 +72,22 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                 args.filenames,
             )
     else:
-        print("C")
         problems = map(
             partial(evaluate_file, allowed_aliases),
             args.filenames,
         )
-        print(f"{problems=}")
 
-    try:
-        problem = next(problems)
-        print(f"1 {problem=}")
+    exit_code: int = 0
+    for problem in problems:  # type: Generator
+        try:
+            p = next(problem)
+            print(p)
+            exit_code = 1
+        except StopIteration:
+            break
         for p in problem:  # type: DisallowedImportAlias
-            print("Problem:", p)
-        else:
-            print("End loop 1")
-            print(f"{next(problem)=}")
-        print("D")
-    except StopIteration:
-        return 0
-
-    for problem in problems:
-        print(f"2 {problem=}")
-        for p in problem:  # type: DisallowedImportAlias
-            print("Problem:", p)
-    return 1
+            print(p)
+    return exit_code
 
 
 if __name__ == "__main__":
