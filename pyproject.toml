@@ -10,7 +10,7 @@ packages = [{include = "allowed_import_aliases"}]
 python = "^3.8"
 
 [tool.poetry.scripts]
-pre_commit_python_allowed_import_aliases = 'allowed_import_aliases.main:main'
+allowed_import_aliases = "allowed_import_aliases.main:main"
 
 [build-system]
 requires = ["poetry-core"]
