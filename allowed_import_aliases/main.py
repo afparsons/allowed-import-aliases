@@ -88,6 +88,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         print(f"1 {problem=}")
         for p in problem:  # type: DisallowedImportAlias
             print("Problem:", p)
+        else:
+            print("End loop 1")
+            print(f"{next(problem)=}")
         print("D")
     except StopIteration:
         return 0
