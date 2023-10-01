@@ -81,15 +81,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             partial(evaluate_file, allowed_aliases),
             args.filenames,
         )
+        print(f"{problems=}")
 
     try:
         problem = next(problems)
+        print(f"1 {problem=}")
         for p in problem:  # type: DisallowedImportAlias
             print("Problem:", p)
     except StopIteration:
         return 0
 
     for problem in problems:
+        print(f"2 {problem=}")
         for p in problem:  # type: DisallowedImportAlias
             print("Problem:", p)
     return 1
