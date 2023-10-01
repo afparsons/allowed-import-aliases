@@ -1,0 +1,7 @@
+repos:
+  - repo: https://github.com/afparsons/allowed-import-aliases
+    rev: 0.1.0
+    hooks:
+      - id: allowed-import-aliases
+        args:
+          - -a pandas pd

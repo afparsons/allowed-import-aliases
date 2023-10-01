@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "allowed-import-aliases"
+version = "0.1.0"
+description = ""
+authors = ["Andrew Parsons <parsonsandrew1@gmail.com>"]
+readme = "README.md"
+packages = [{include = "allowed_import_aliases"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.scripts]
+pre_commit_python_allowed_import_aliases = 'allowed_import_aliases.main:main'
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

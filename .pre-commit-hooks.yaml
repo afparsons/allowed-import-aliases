@@ -1,0 +1,5 @@
+-   id: allowed-import-aliases
+    name: Allowed Python import aliases
+    entry: allowed_import_aliases
+    language: python
+    types: [python]
