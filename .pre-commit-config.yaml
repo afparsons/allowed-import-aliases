@@ -1,7 +1,28 @@
 repos:
   - repo: https://github.com/afparsons/allowed-import-aliases
-    rev: 9f16d8b
+    rev: a12288d
     hooks:
       - id: allowed-import-aliases
         args:
           - -a pandas pd
+  - repo: https://github.com/ambv/black
+    rev: 23.11.0
+    hooks:
+        - id: black
+          language_version: python3.8
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+        - id: isort
+          name: isort (python)
+        - id: isort
+          name: isort (cython)
+          types: [cython]
+        - id: isort
+          name: isort (pyi)
+          types: [pyi]
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.7.0
+    hooks:
+        - id: mypy
+          language_version: python3.8
