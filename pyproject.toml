@@ -12,6 +12,10 @@ python = "^3.8"
 [tool.poetry.scripts]
 allowed_import_aliases = "allowed_import_aliases.main:main"
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.2"
+pytest-cov = "^4.1.0"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
