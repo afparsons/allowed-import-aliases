@@ -5,7 +5,7 @@
 import ast
 from collections import defaultdict
 from pathlib import Path
-from typing import DefaultDict, Dict, Generator, NamedTuple, Optional, Set, Union
+from typing import Mapping, DefaultDict, Dict, Generator, NamedTuple, Optional, Set, Union
 
 
 class AsName(NamedTuple):
@@ -111,14 +111,14 @@ class DisallowedImportAlias(Exception):
 
 
 def evaluate_file(
-    allowed_aliases: Dict[str, Set[str]],
+    allowed_aliases: Mapping[str, Set[str]],
     filepath: Union[Path, str],
     *,
     lazy: bool = False,
 ) -> Generator[DisallowedImportAlias, None, None]:
     """
     Args:
-        allowed_aliases (Dict[str, Set[str]]):
+        allowed_aliases (Mapping[str, Set[str]]):
             A mapping of imports to a set of allowed aliases.
 
         filepath (Union[Path, str]):
@@ -163,7 +163,7 @@ def evaluate_source(
 
 
 def evaluate(
-    allowed_aliases: Dict[str, Set[str]],
+    allowed_aliases: Mapping[str, Set[str]],
     root: ast.AST,
     *,
     filename: str = "<unknown>",
@@ -201,7 +201,7 @@ def evaluate(
                         )
                     )
                     if lazy:
-                        break
+                        return
             else:
                 if allowed != as_names:
                     for actual in as_names:
@@ -216,36 +216,4 @@ def evaluate(
                                     )
                                 )
                                 if lazy:
-                                    break
-
-
-
-    # imports = get_imports_from_ast(root=root)
-    # for qualname, as_names in imports.items():
-    #     if qualname in allowed_aliases:
-    #         if allowed_aliases[qualname] != as_names:
-    #             for actual in as_names:
-    #                 for allowed in allowed_aliases[qualname]:
-    #                     if allowed != actual:
-    #                         yield DisallowedImportAlias(
-    #                             format_error_message(
-    #                                 filepath=filename,
-    #                                 qualname=qualname,
-    #                                 allowed_aliases=allowed_aliases[qualname],
-    #                                 actual_alias=actual,
-    #                             )
-    #                         )
-    #                         if lazy:
-    #                             break
-    #     else:
-    #         if as_names:
-    #             yield DisallowedImportAlias(
-    #                 format_error_message(
-    #                     filepath=filename,
-    #                     qualname=qualname,
-    #                     allowed_aliases=set(),
-    #                     actual_alias=as_names.pop(),
-    #                 )
-    #             )
-    #             if lazy:
-    #                 break
+                                    return

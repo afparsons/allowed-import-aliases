@@ -19,7 +19,7 @@ pip install .
   hooks:
     - id: allowed-import-aliases
       args:
-        - -p 4
+        - -t 4
         - -a pandas pd
         - -a pyspark.sql.functions psf
         - -a foo.bar fb baz
@@ -27,10 +27,10 @@ pip install .
 
 Arguments 
 
-| Option | Argument type | Description                                                                                                                             |
-|--------|---------------|-----------------------------------------------------------------------------------------------------------------------------------------|
-| `-t`   | integer       | Whether to use `concurrent.futures.ThreadPoolExecutor`, and if so, how many workers to use.                                             |
-| `-p`   | integer       | Whether to use `concurrent.futures.ProcessPoolExecutor`, and if so, how many workers to use.                                            |
+| Option | Argument type | Description                                                                                                                            |
+|--------|---------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| `-t`   | integer       | Whether to use `concurrent.futures.ThreadPoolExecutor`, and if so, how many workers to use.                                            |
+| `-p`   | integer       | Whether to use `concurrent.futures.ProcessPoolExecutor`, and if so, how many workers to use.                                           |
 | `-a`   | strings       | The first string corresponds to the import, and all successive space-delimited strings correspond to acceptable aliases for the import. |
 
 ## Credits

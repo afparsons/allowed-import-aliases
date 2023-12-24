@@ -113,7 +113,7 @@ def test_evaluate():
     assert len(evaluations) == 2
 
 
-def test_evaluate_2():
+def test_evaluate_with_allowance_with_asname_ok():
     root = allowed_import_aliases.parse.get_ast_from_source(
         source="import pandas as pd\n",
         filename="<str>"
@@ -129,7 +129,7 @@ def test_evaluate_2():
     assert len(evaluations) == 0
 
 
-def test_evaluate_2_lazy():
+def test_evaluate_with_allowance_with_asname_ok_lazy():
     root = allowed_import_aliases.parse.get_ast_from_source(
         source="import pandas as pd\n",
         filename="<str>"
@@ -194,7 +194,7 @@ def test_evaluate_with_allowance_no_asname():
     assert len(evaluations) == 0
 
 
-def test_evaluate_with_allowance_with_asname():
+def test_evaluate_with_allowance_with_asname_bad():
     root = allowed_import_aliases.parse.get_ast_from_source(
         source="import pandas as pa\n",
         filename="<str>"
@@ -210,7 +210,7 @@ def test_evaluate_with_allowance_with_asname():
     assert len(evaluations) == 1
 
 
-def test_evaluate_with_allowance_with_asname_lazy():
+def test_evaluate_with_allowance_with_asname_bad_lazy():
     root = allowed_import_aliases.parse.get_ast_from_source(
         source="import pandas as pa\n",
         filename="<str>"

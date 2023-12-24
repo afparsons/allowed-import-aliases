@@ -1,1 +1,2 @@
 import allowed_import_aliases.parse
+import allowed_import_aliases.main
