@@ -3,6 +3,7 @@
 import argparse
 import os
 import pathlib
+import sys as s
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from functools import partial
@@ -19,8 +20,6 @@ from typing import (
     Tuple,
     Union,
 )
-
-import sys as s
 
 from allowed_import_aliases.parse import DisallowedImportAlias, evaluate_file
 
@@ -66,6 +65,8 @@ def _multithread(
     Returns:
         An Iterator of Generators, each producing a ``DisallowedImportAlias`` exception.
     """
+    filenames = [f for f in filenames]
+    print(f"{allowed_aliases=} {filenames=} {max_workers=}")
     with ThreadPoolExecutor(
         max_workers=max_workers,
         thread_name_prefix="python-import-alias-",
@@ -196,18 +197,21 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     if t is not None:
         problems = _multithread(
-            max_workers=t or None,
             allowed_aliases=allowed_aliases,
             filenames=args.filenames,
+            max_workers=t or None,
         )
     elif p is not None:
         problems = _multiprocess(
-            max_workers=p or None,
             allowed_aliases=allowed_aliases,
             filenames=args.filenames,
+            max_workers=p or None,
         )
     else:
         problems = _serial(allowed_aliases=allowed_aliases, filenames=args.filenames)
+
+    problems = [prob for prob in problems]
+    print(f"{problems=}")
 
     exit_code: int = 0
     for problem in problems:  # type: Generator
