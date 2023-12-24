@@ -189,6 +189,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     except TypeError as e:
         raise Exception(f"{args}") from e
 
+    print(f"{args.filenames=}")
+
     if t is not None:
         problems = _multithread(
             allowed_aliases=allowed_aliases,
@@ -205,6 +207,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         problems = _serial(allowed_aliases=allowed_aliases, filenames=args.filenames)
 
     problems = [prob for prob in problems]
+    print(f"{problems=}")
 
     exit_code: int = 0
     for problem in problems:  # type: Generator
