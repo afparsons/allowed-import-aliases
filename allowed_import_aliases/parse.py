@@ -1,13 +1,10 @@
 """Parsing logic."""
 
-# TODO: https://stackoverflow.com/questions/8654666/decorator-for-overloading-in-python
-
 import ast
 import os
 from collections import defaultdict
 from pathlib import Path
 from typing import (
-    Any,
     DefaultDict,
     Dict,
     Generator,
@@ -15,7 +12,7 @@ from typing import (
     NamedTuple,
     Optional,
     Set,
-    Union
+    Union,
 )
 
 from typing_extensions import Buffer

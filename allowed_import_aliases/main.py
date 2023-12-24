@@ -17,7 +17,7 @@ from typing import (
     Sequence,
     Set,
     Tuple,
-    Union
+    Union,
 )
 
 from allowed_import_aliases.parse import DisallowedImportAlias, evaluate_file
