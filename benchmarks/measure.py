@@ -21,7 +21,6 @@ from typing import (
 
 import allowed_import_aliases
 
-
 R = TypeVar("R")
 
 
