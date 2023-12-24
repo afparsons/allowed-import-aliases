@@ -1,14 +1,26 @@
 """Main entrypoint."""
 
 import argparse
-from collections import defaultdict
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
-from functools import partial
 import os
-from typing import Iterator, DefaultDict, Generator, Optional, Sequence, Set, Mapping, Iterable, Union
 import pathlib
+from collections import defaultdict
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from functools import partial
+from typing import (
+    DefaultDict,
+    Generator,
+    Iterable,
+    Iterator,
+    List,
+    Mapping,
+    Optional,
+    Sequence,
+    Set,
+    Tuple,
+    Union
+)
 
-from allowed_import_aliases.parse import evaluate_file, DisallowedImportAlias
+from allowed_import_aliases.parse import DisallowedImportAlias, evaluate_file
 
 
 def _serial(
@@ -58,7 +70,8 @@ def _multithread(
         initializer=None,
     ) as thread_pool_executor:
         return thread_pool_executor.map(
-            partial(evaluate_file, allowed_aliases), filenames,
+            partial(evaluate_file, allowed_aliases),
+            filenames,
         )
 
 
@@ -86,25 +99,48 @@ def _multiprocess(
         initializer=None,
     ) as process_pool_executor:
         return process_pool_executor.map(
-            partial(evaluate_file, allowed_aliases), filenames,
+            partial(evaluate_file, allowed_aliases),
+            filenames,
         )
 
 
-def _validate_args(t: Optional[int], p: Optional[int]) -> None:
+def _validate_args(
+    t: Optional[List[int]],
+    p: Optional[List[int]],
+) -> Tuple[Optional[int], Optional[int]]:
     """
     Args:
         t: The argument passed to ``-t``.
         p: The argument passed to ``-p``.
 
     Returns:
-        None.
+        A tuple of two integers.
     """
     if t is not None and p is not None:
         raise ValueError("-t and -p are mutually exclusive.")
-    if t is not None and t < 0:
-        raise ValueError("-t cannot take a value less than 0.")
-    if p is not None and p < 0:
-        raise ValueError("-p cannot take a value less than 0.")
+
+    if t is None:
+        _t = None
+    else:
+        if len(t) > 1:
+            raise ValueError("-t can only accept one integer argument.")
+        _t = t[0]
+        if not isinstance(_t, int):
+            raise ValueError("-t can only accept one integer argument.")
+        if _t < 0:
+            raise ValueError("-t cannot take a value less than 0.")
+
+    if p is None:
+        _p = None
+    else:
+        if len(p) > 1:
+            raise ValueError("-p can only accept one integer argument.")
+        _p = p[0]
+        if not isinstance(_p, int):
+            raise ValueError("-p can only accept one integer argument.")
+        if _p < 0:
+            raise ValueError("-p cannot take a value less than 0.")
+    return _t, _p
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
@@ -133,7 +169,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         "-p",
         type=int,
         action="store",
-        choices=(range(0, os.cpu_count()+1)),
+        choices=(range(0, (os.cpu_count() or 0) + 1)),
         help="""
             The number of workers to use.
             If equal to 0, it will default to the number of processors on the machine.
@@ -144,7 +180,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     )
     args = parser.parse_args(argv)
     allowed_aliases: DefaultDict[str, Set[str]] = defaultdict(set)
-    _validate_args(t=args.t, p=args.p)
+    t, p = _validate_args(t=args.t, p=args.p)
 
     try:
         for arguments in args.a:
@@ -153,15 +189,15 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     except TypeError as e:
         raise Exception(f"{args}") from e
 
-    if args.t is not None:
+    if t is not None:
         problems = _multithread(
-            max_workers=args.t or None,
+            max_workers=t or None,
             allowed_aliases=allowed_aliases,
             filenames=args.filenames,
         )
-    elif args.p is not None:
+    elif p is not None:
         problems = _multiprocess(
-            max_workers=args.p or None,
+            max_workers=p or None,
             allowed_aliases=allowed_aliases,
             filenames=args.filenames,
         )
@@ -176,8 +212,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             exit_code = 1
         except StopIteration:
             break
-        for p in problem:  # type: DisallowedImportAlias
-            print(p)
+        for q in problem:  # type: DisallowedImportAlias
+            print(q)
     return exit_code
 
 

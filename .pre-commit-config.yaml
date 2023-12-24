@@ -1,10 +1,11 @@
 repos:
-  - repo: https://github.com/afparsons/allowed-import-aliases
-    rev: a12288d
-    hooks:
-      - id: allowed-import-aliases
-        args:
-          - -a pandas pd
+#  - repo: https://github.com/afparsons/allowed-import-aliases
+#    rev: cef3a5a
+#    hooks:
+#      - id: allowed-import-aliases
+#        args:
+#          - -a math m
+#          - -t 0
   - repo: https://github.com/ambv/black
     rev: 23.11.0
     hooks:

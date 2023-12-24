@@ -3,9 +3,22 @@
 # TODO: https://stackoverflow.com/questions/8654666/decorator-for-overloading-in-python
 
 import ast
+import os
 from collections import defaultdict
 from pathlib import Path
-from typing import Mapping, DefaultDict, Dict, Generator, NamedTuple, Optional, Set, Union
+from typing import (
+    Any,
+    DefaultDict,
+    Dict,
+    Generator,
+    Mapping,
+    NamedTuple,
+    Optional,
+    Set,
+    Union
+)
+
+from typing_extensions import Buffer
 
 
 class AsName(NamedTuple):
@@ -22,7 +35,7 @@ class AsName(NamedTuple):
     lineno: int
     """The import statement's line number."""
 
-    def __eq__(self, other: str) -> bool:
+    def __eq__(self, other: object) -> bool:
         return other == self.alias
 
     def __hash__(self) -> int:
@@ -42,7 +55,9 @@ def get_ast_from_filepath(filepath: Union[str, Path]) -> ast.AST:
         return ast.parse(source=file.read(), filename=filepath)
 
 
-def get_ast_from_source(source: Union[str, bytes], filename: Union[str, bytes, None]) -> ast.AST:
+def get_ast_from_source(
+    source: Union[str, bytes], filename: Union[str, Buffer, os.PathLike[Any]]
+) -> ast.AST:
     """
     Args:
         source (Union[str, bytes]):
@@ -75,10 +90,12 @@ def get_imports_from_ast(root: ast.AST) -> DefaultDict[str, Set[AsName]]:
             module = f"{node.module}."
         else:
             continue
-        for alias in node.names:
+        for alias in node.names:  # type: ignore[attr-defined]
             if alias.asname:
                 qualname = f"{module}{alias.name}"
-                imports[qualname].add(AsName(qualname=qualname, alias=alias.asname, lineno=node.lineno))
+                imports[qualname].add(
+                    AsName(qualname=qualname, alias=alias.asname, lineno=node.lineno)
+                )
     return imports
 
 
@@ -88,7 +105,6 @@ def format_error_message(
     allowed_aliases: Optional[Set[str]],
     actual_alias: AsName,
 ) -> str:
-
     if allowed_aliases:
         _allowed: str = (
             f"The only allowed alias{'es are' if len(allowed_aliases) > 1 else ' is'}"
@@ -131,7 +147,7 @@ def evaluate_file(
         A Generator of DisallowedImportAliases, each containing an error message string.
     """
     root = get_ast_from_filepath(filepath=filepath)
-    yield from evaluate(allowed_aliases, root, filename=filepath, lazy=lazy)
+    yield from evaluate(allowed_aliases, root, filename=str(filepath), lazy=lazy)
 
 
 def evaluate_source(

@@ -6,14 +6,25 @@ import pkgutil
 import sys
 import tempfile
 from time import perf_counter_ns
-from typing import Callable, Set, Mapping, Generator, Union, Tuple, Iterable, List, TypeVar
+from typing import (
+    Callable,
+    Generator,
+    Iterable,
+    Iterator,
+    List,
+    Mapping,
+    Set,
+    Tuple,
+    TypeVar,
+    Union
+)
+
+import allowed_import_aliases
 
 if sys.version_info < (3, 10):
     from typing_extensions import ParamSpec
 else:
     from typing import ParamSpec
-
-import allowed_import_aliases
 
 
 P = ParamSpec("P")
@@ -63,7 +74,9 @@ def _get_top_level_functions(
     )
 
 
-def get_importables_from_module(filepath: str) -> Generator[Union[ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef], None, None]:
+def get_importables_from_module(
+    filepath: str,
+) -> Generator[Union[ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef], None, None]:
     """
 
     Args:
@@ -88,8 +101,8 @@ def build_imports_from_builtins() -> List[Tuple[str, str, str]]:
     for module in sys.builtin_module_names:
         module = module.lstrip("_")
         filepath = pkgutil.get_loader(module)
-        try:
-            for stmt in get_importables_from_module(filepath.path):
+        if filepath is not None:
+            for stmt in get_importables_from_module(filepath.path):  # type: ignore[attr-defined]
                 imports.append(
                     (
                         f"import {module}.{stmt.name}",  # import statement
@@ -97,8 +110,6 @@ def build_imports_from_builtins() -> List[Tuple[str, str, str]]:
                         f"as {stmt.name}_{module}",  # disallowed alias
                     )
                 )
-        except AttributeError:
-            pass
     return imports
 
 
@@ -115,22 +126,32 @@ def build_temp_package(max_modules: int = 1000) -> Generator[str, None, None]:
 
         for i in range(max_modules):
             with pathlib.Path(temporary_directory, f"module_{i}.py").open("w") as f:
-                f.writelines((f"{import_statement} {bad_alias}\n" for import_statement, _, bad_alias in _IMPORTS))
+                f.writelines(
+                    (
+                        f"{import_statement} {bad_alias}\n"
+                        for import_statement, _, bad_alias in _IMPORTS
+                    )
+                )
         yield temporary_directory
-
 
 
 class BuildTempPackage:
     """
     A context manager used to build a dummy Python package under a temporary directory.
     """
+
     def _write_modules(self, modules: int, imports: int):
         with pathlib.Path(self.td.name, "__init__.py").open("w") as f:
             f.write("\n")
 
         for i in range(modules):
             with pathlib.Path(self.td.name, f"module_{i}.py").open("w") as f:
-                f.writelines((f"{import_statement} {bad_alias}\n" for import_statement, _, bad_alias in _IMPORTS[:imports]))
+                f.writelines(
+                    (
+                        f"{import_statement} {bad_alias}\n"
+                        for import_statement, _, bad_alias in _IMPORTS[:imports]
+                    )
+                )
 
     def __init__(self, modules: int, imports: int):
         self.td = tempfile.TemporaryDirectory()
@@ -144,10 +165,8 @@ class BuildTempPackage:
 
 
 def benchmark(
-    handler: Union[
-        allowed_import_aliases.main._serial,
-        allowed_import_aliases.main._multithread,
-        allowed_import_aliases.main._multiprocess,
+    handler: Callable[
+        [Mapping[str, Set[str]], Iterable[Union[pathlib.Path, str]]], Iterator[R]
     ],
     allowed_aliases: Mapping[str, Set[str]],
     filenames: Iterable[Union[pathlib.Path, str]],
@@ -187,7 +206,8 @@ def run_benchmarks() -> Generator[Tuple[Tuple[str, int], int, int], None, None]:
                 filepaths = pathlib.Path(temp_package.td.name).glob(pattern="*.py")
                 for handler in handlers:
                     result = benchmark(
-                        handler,
+                        # https://github.com/python/mypy/issues/14661
+                        handler,  # type: ignore[arg-type]
                         allowed_aliases={},
                         filenames=filepaths,
                     )
@@ -195,9 +215,9 @@ def run_benchmarks() -> Generator[Tuple[Tuple[str, int], int, int], None, None]:
 
 
 def plot_sns(results: Iterable[Tuple[Tuple[str, int], int, int]]):
-    import seaborn as sns
-    import pandas as pd
     import matplotlib.pyplot as plt
+    import pandas as pd
+    import seaborn as sns
 
     sns.set_theme(rc={"figure.figsize": (12, 6)})
 
@@ -234,8 +254,8 @@ def plot_sns(results: Iterable[Tuple[Tuple[str, int], int, int]]):
 
 
 def plot_plotly(results: Iterable[Tuple[Tuple[str, int], int, int]]):
-    import plotly.express as px
     import pandas as pd
+    import plotly.express as px
 
     data = pd.DataFrame(
         data=((r[0][0][1:], r[0][1], r[1], r[2]) for r in results),
@@ -260,12 +280,8 @@ def plot_plotly(results: Iterable[Tuple[Tuple[str, int], int, int]]):
 
     figure.update_layout(
         scene={
-            "xaxis": {
-                "type": "category"
-            },
-            "yaxis": {
-                "type": "category"
-            },
+            "xaxis": {"type": "category"},
+            "yaxis": {"type": "category"},
         }
     )
 

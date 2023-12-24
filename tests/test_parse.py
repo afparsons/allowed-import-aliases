@@ -84,7 +84,7 @@ def test_asname_hash():
 def test_evaluate_lazy():
     root = allowed_import_aliases.parse.get_ast_from_source(
         source="import datetime.datetime as dt\nimport math as m\nimport pandas as pd\n",
-        filename="<str>"
+        filename="<str>",
     )
     evaluations = tuple(
         allowed_import_aliases.parse.evaluate(
@@ -100,7 +100,7 @@ def test_evaluate_lazy():
 def test_evaluate():
     root = allowed_import_aliases.parse.get_ast_from_source(
         source="import datetime.datetime as dt\nimport math as m\nimport pandas as pd\n",
-        filename="<str>"
+        filename="<str>",
     )
     evaluations = tuple(
         allowed_import_aliases.parse.evaluate(
@@ -115,8 +115,7 @@ def test_evaluate():
 
 def test_evaluate_with_allowance_with_asname_ok():
     root = allowed_import_aliases.parse.get_ast_from_source(
-        source="import pandas as pd\n",
-        filename="<str>"
+        source="import pandas as pd\n", filename="<str>"
     )
     evaluations = tuple(
         allowed_import_aliases.parse.evaluate(
@@ -131,8 +130,7 @@ def test_evaluate_with_allowance_with_asname_ok():
 
 def test_evaluate_with_allowance_with_asname_ok_lazy():
     root = allowed_import_aliases.parse.get_ast_from_source(
-        source="import pandas as pd\n",
-        filename="<str>"
+        source="import pandas as pd\n", filename="<str>"
     )
     evaluations = tuple(
         allowed_import_aliases.parse.evaluate(
@@ -145,11 +143,9 @@ def test_evaluate_with_allowance_with_asname_ok_lazy():
     assert len(evaluations) == 0
 
 
-
 def test_evaluate_no_allowances_with_asname():
     root = allowed_import_aliases.parse.get_ast_from_source(
-        source="import pandas as pd\n",
-        filename="<str>"
+        source="import pandas as pd\n", filename="<str>"
     )
     evaluations = tuple(
         allowed_import_aliases.parse.evaluate(
@@ -164,8 +160,7 @@ def test_evaluate_no_allowances_with_asname():
 
 def test_evaluate_no_allowances_no_asname():
     root = allowed_import_aliases.parse.get_ast_from_source(
-        source="import pandas\n",
-        filename="<str>"
+        source="import pandas\n", filename="<str>"
     )
     evaluations = tuple(
         allowed_import_aliases.parse.evaluate(
@@ -180,8 +175,7 @@ def test_evaluate_no_allowances_no_asname():
 
 def test_evaluate_with_allowance_no_asname():
     root = allowed_import_aliases.parse.get_ast_from_source(
-        source="import pandas\n",
-        filename="<str>"
+        source="import pandas\n", filename="<str>"
     )
     evaluations = tuple(
         allowed_import_aliases.parse.evaluate(
@@ -196,8 +190,7 @@ def test_evaluate_with_allowance_no_asname():
 
 def test_evaluate_with_allowance_with_asname_bad():
     root = allowed_import_aliases.parse.get_ast_from_source(
-        source="import pandas as pa\n",
-        filename="<str>"
+        source="import pandas as pa\n", filename="<str>"
     )
     evaluations = tuple(
         allowed_import_aliases.parse.evaluate(
@@ -212,8 +205,7 @@ def test_evaluate_with_allowance_with_asname_bad():
 
 def test_evaluate_with_allowance_with_asname_bad_lazy():
     root = allowed_import_aliases.parse.get_ast_from_source(
-        source="import pandas as pa\n",
-        filename="<str>"
+        source="import pandas as pa\n", filename="<str>"
     )
     evaluations = tuple(
         allowed_import_aliases.parse.evaluate(
@@ -229,7 +221,9 @@ def test_evaluate_with_allowance_with_asname_bad_lazy():
 def test_evaluate_file(tmp_path):
     p = tmp_path / "test.py"
     with p.open("w") as f:
-        f.write("import datetime.datetime as dt\nimport math as m\nimport pandas as pd\n")
+        f.write(
+            "import datetime.datetime as dt\nimport math as m\nimport pandas as pd\n"
+        )
     evaluations = tuple(
         allowed_import_aliases.parse.evaluate_file(
             allowed_aliases={"datetime.datetime": {"dt"}},
@@ -262,6 +256,6 @@ def test_format_error_message():
         filepath="test.py",
         qualname="pandas",
         allowed_aliases={"pd"},
-        actual_alias=as_name
+        actual_alias=as_name,
     )
     assert isinstance(message, str)
