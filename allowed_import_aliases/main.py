@@ -3,7 +3,6 @@
 import argparse
 import os
 import pathlib
-import sys as s
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from functools import partial
@@ -145,7 +144,6 @@ def _validate_args(
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
-    print(f"{s.argv=}")
     parser = argparse.ArgumentParser()
     parser.add_argument("filenames", nargs="*")
     parser.add_argument(
@@ -205,9 +203,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         )
     else:
         problems = _serial(allowed_aliases=allowed_aliases, filenames=args.filenames)
-
-    # problems = [prob for prob in problems]
-    # print(f"{problems=}")
 
     exit_code: int = 0
     for problem in problems:  # type: Generator
