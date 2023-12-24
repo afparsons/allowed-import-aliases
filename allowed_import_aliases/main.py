@@ -20,7 +20,11 @@ from typing import (
     Union,
 )
 
+import pandas as pd
+
 from allowed_import_aliases.parse import DisallowedImportAlias, evaluate_file
+
+df = pd.DataFrame()
 
 
 def _serial(
@@ -188,6 +192,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             allowed_aliases[qualname].update(aliases)
     except TypeError as e:
         raise Exception(f"{args}") from e
+
+    print(f"{t=} {p=} {allowed_aliases=} {args.filenames=}")
 
     if t is not None:
         problems = _multithread(
