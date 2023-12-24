@@ -20,11 +20,9 @@ from typing import (
     Union,
 )
 
-import pandas as pd
+import sys as s
 
 from allowed_import_aliases.parse import DisallowedImportAlias, evaluate_file
-
-df = pd.DataFrame()
 
 
 def _serial(
@@ -148,6 +146,7 @@ def _validate_args(
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
+    print(f"{s.argv=}")
     parser = argparse.ArgumentParser()
     parser.add_argument("filenames", nargs="*")
     parser.add_argument(

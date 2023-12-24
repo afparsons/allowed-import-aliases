@@ -1,10 +1,10 @@
 repos:
   - repo: https://github.com/afparsons/allowed-import-aliases
-    rev: 6db494d
+    rev: 83c9271
     hooks:
       - id: allowed-import-aliases
         args:
-          - -a numpy np
+          - -a math m
           - -t 0
   - repo: https://github.com/ambv/black
     rev: 23.11.0
