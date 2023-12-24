@@ -65,8 +65,6 @@ def _multithread(
     Returns:
         An Iterator of Generators, each producing a ``DisallowedImportAlias`` exception.
     """
-    filenames = [f for f in filenames]
-    print(f"{allowed_aliases=} {filenames=} {max_workers=}")
     with ThreadPoolExecutor(
         max_workers=max_workers,
         thread_name_prefix="python-import-alias-",
@@ -192,8 +190,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             allowed_aliases[qualname].update(aliases)
     except TypeError as e:
         raise Exception(f"{args}") from e
-
-    print(f"{t=} {p=} {allowed_aliases=} {args.filenames=}")
 
     if t is not None:
         problems = _multithread(
