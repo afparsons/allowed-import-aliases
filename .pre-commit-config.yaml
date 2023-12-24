@@ -1,6 +1,6 @@
 repos:
 #  - repo: https://github.com/afparsons/allowed-import-aliases
-#    rev: cef3a5a
+#    rev: a922121
 #    hooks:
 #      - id: allowed-import-aliases
 #        args:

@@ -56,7 +56,7 @@ def get_ast_from_filepath(filepath: Union[str, Path]) -> ast.AST:
 
 
 def get_ast_from_source(
-    source: Union[str, bytes], filename: Union[str, Buffer, os.PathLike[Any]]
+    source: Union[str, bytes], filename: Union[str, Buffer, os.PathLike]
 ) -> ast.AST:
     """
     Args:
