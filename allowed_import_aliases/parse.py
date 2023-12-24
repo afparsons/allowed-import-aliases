@@ -18,7 +18,7 @@ from typing import (
 
 from typing_extensions import Buffer
 
-now = dt.datetime.now()
+now_ = dt.datetime.now()
 
 
 class AsName(NamedTuple):

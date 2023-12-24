@@ -180,6 +180,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         default=None,
     )
     args = parser.parse_args(argv)
+    if args.a is None:
+        return 0
+
     allowed_aliases: DefaultDict[str, Set[str]] = defaultdict(set)
     t, p = _validate_args(t=args.t, p=args.p)
 
@@ -207,9 +210,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         )
     else:
         problems = _serial(allowed_aliases=allowed_aliases, filenames=args.filenames)
-
-    problems = [prob for prob in problems]
-    print(f"{problems=}")
 
     exit_code: int = 0
     for problem in problems:  # type: Generator
