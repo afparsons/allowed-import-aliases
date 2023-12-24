@@ -4,7 +4,7 @@ repos:
     hooks:
       - id: allowed-import-aliases
         args:
-          - -a math m
+          - -a numpy np
           - -t 0
   - repo: https://github.com/ambv/black
     rev: 23.11.0

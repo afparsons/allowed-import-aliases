@@ -2,6 +2,7 @@
 
 import ast
 import collections
+import datetime as dt
 import os
 from pathlib import Path
 from typing import (
@@ -16,6 +17,8 @@ from typing import (
 )
 
 from typing_extensions import Buffer
+
+now = dt.datetime.now()
 
 
 class AsName(NamedTuple):

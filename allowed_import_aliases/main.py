@@ -204,6 +204,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     else:
         problems = _serial(allowed_aliases=allowed_aliases, filenames=args.filenames)
 
+    problems = [prob for prob in problems]
+
     exit_code: int = 0
     for problem in problems:  # type: Generator
         try:
