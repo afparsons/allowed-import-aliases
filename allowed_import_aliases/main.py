@@ -1,6 +1,7 @@
 """Main entrypoint."""
 
 import argparse
+import datetime
 import os
 import pathlib
 from collections import defaultdict
@@ -189,6 +190,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     except TypeError as e:
         raise Exception(f"{args}") from e
 
+    print(f"{datetime.datetime.now()=}")
     print(f"{args.filenames=}")
 
     if t is not None:
