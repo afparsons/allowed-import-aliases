@@ -1,8 +1,8 @@
 """Parsing logic."""
 
 import ast
+import collections
 import os
-from collections import defaultdict
 from pathlib import Path
 from typing import (
     DefaultDict,
@@ -79,7 +79,7 @@ def get_imports_from_ast(root: ast.AST) -> DefaultDict[str, Set[AsName]]:
         A DefaultDict with the fully-qualified string names of Python imports a keys
         and a set of named tuples containing information parsed from the import using the abstract syntax tree.
     """
-    imports = defaultdict(set)
+    imports = collections.defaultdict(set)
     for node in ast.walk(root):
         if isinstance(node, ast.Import):
             module = ""
